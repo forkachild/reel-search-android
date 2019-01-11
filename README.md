@@ -2,8 +2,7 @@
 
 # Reel Search for Android
 
-[![Release](https://jitpack.io/v/forkachild/reel-search-android.svg?style=flat-square)]
-(https://jitpack.io/#forkachild/reel-search-android)
+[![Release](https://jitpack.io/v/forkachild/reel-search-android.svg?style=flat-square)](https://jitpack.io/#forkachild/reel-search-android)
 
 ## Watch it in action
 
