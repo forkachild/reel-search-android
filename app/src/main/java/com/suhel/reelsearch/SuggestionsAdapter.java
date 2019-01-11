@@ -48,7 +48,7 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<SuggestionsAdapter.
         notifyDataSetChanged();
     }
 
-    private String getItem(int position) {
+    public String getItem(int position) {
         return data.get(position);
     }
 

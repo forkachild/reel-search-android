@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@color/colorPaleBlueLight" android:state_enabled="false" />
+
+    <item>
+        <ripple android:color="@color/colorRipple">
+            <item android:drawable="@color/colorPaleBlue" />
+        </ripple>
+    </item>
+
+</selector>

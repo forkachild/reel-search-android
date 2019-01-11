@@ -39,6 +39,7 @@ import java.util.List;
 public class DictionaryManager {
 
     private final List<String> mWords = new ArrayList<>();
+    private volatile boolean mIsLoaded = false;
     private Context mContext;
 
     public DictionaryManager(@NonNull Context context) {
@@ -55,6 +56,10 @@ public class DictionaryManager {
         synchronized (mWords) {
             mWords.add(word);
         }
+    }
+
+    public boolean isLoaded() {
+        return mIsLoaded;
     }
 
     public Completable loadDictionary() {
@@ -77,11 +82,13 @@ public class DictionaryManager {
                 e.printStackTrace();
             }
 
+            mIsLoaded = true;
+
         }).compose(RxUtils.composeCompletable());
     }
 
     public Single<List<String>> query(@NonNull String startsWith) {
-        if (startsWith.isEmpty()) {
+        if (!mIsLoaded || startsWith.isEmpty()) {
             return Single.just(new ArrayList<>());
         } else {
             return Observable.fromIterable(mWords)

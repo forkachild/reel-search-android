@@ -29,7 +29,6 @@ import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -152,6 +151,16 @@ public class CenteredLayoutManager extends RecyclerView.LayoutManager {
         render(recycler, state);
         recycle(recycler);
         return mScrollY - lastScrollY;
+    }
+
+    /**
+     * Returns the position of item highlighted in the middle of the
+     * screen
+     *
+     * @return Item index starting from 0
+     */
+    public int getSelectedItemPosition() {
+        return (int) (((float) mScrollY / mChildHeight) + 0.5f);
     }
 
     /**

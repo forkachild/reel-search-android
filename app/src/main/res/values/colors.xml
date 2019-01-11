@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ MIT License
   ~
   ~ Copyright (c) 2019 Suhel Chakraborty
@@ -33,5 +32,9 @@
     <color name="colorGrey">#AAA</color>
     <color name="colorBlack">#000</color>
     <color name="colorTransparent">#00000000</color>
+    <color name="colorRipple">#44FFFFFF</color>
+
+    <color name="colorPaleBlue">#436892</color>
+    <color name="colorPaleBlueLight">#c3d3e6</color>
 
 </resources>

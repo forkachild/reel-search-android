@@ -49,7 +49,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/colorTransparent"
-                android:fontFamily="sans-serif-light"
                 android:hint="Start typing"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
@@ -58,19 +57,6 @@
                 android:textSize="32sp" />
 
         </com.suhel.library.ReelSearchView>
-
-        <TextView
-            android:id="@+id/btnSelect"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_gravity="bottom"
-            android:background="@drawable/bg_button"
-            android:enabled="false"
-            android:fontFamily="sans-serif-medium"
-            android:gravity="center"
-            android:text="Select"
-            android:textColor="@color/colorWhite"
-            android:textSize="24sp" />
 
     </android.support.design.widget.CoordinatorLayout>
 
