@@ -25,7 +25,7 @@
 <resources>
 
     <style name="AppTheme" parent="AppTheme.Base">
-        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 
 </resources>

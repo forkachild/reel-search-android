@@ -75,7 +75,7 @@ public class DictionaryManager {
                 clearWords();
 
                 while ((word = br.readLine()) != null) {
-                    addWord(word);
+                    addWord(word.toLowerCase());
                 }
 
             } catch (Exception e) {

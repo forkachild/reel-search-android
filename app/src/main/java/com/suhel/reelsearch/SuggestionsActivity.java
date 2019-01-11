@@ -29,6 +29,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputFilter;
+import android.text.Spanned;
 import com.suhel.reelsearch.databinding.ActivitySuggestionsBinding;
 import com.suhel.reelsearch.utils.RxUtils;
 import io.reactivex.disposables.CompositeDisposable;
@@ -53,6 +55,9 @@ public class SuggestionsActivity extends AppCompatActivity {
             Snackbar.make(mBinding.btnSelect,
                     "Selected position " + selectedPosition + " item " + mAdapter.getItem(selectedPosition),
                     Snackbar.LENGTH_SHORT).show();
+        });
+        mBinding.txtQuery.setFilters(new InputFilter[]{
+                (source, start, end, dest, dstart, dend) -> source.toString().toLowerCase().trim()
         });
     }
 
