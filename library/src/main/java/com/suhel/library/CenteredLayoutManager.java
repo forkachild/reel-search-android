@@ -44,6 +44,12 @@ public class CenteredLayoutManager extends RecyclerView.LayoutManager {
     private int mScrollY;
 
     /**
+     * Stores the value of the maximum scroll
+     * that can be reached
+     */
+    private int mMaxScrollY;
+
+    /**
      * Stores the height of each child assuming
      * the children are homogeneous
      */
@@ -54,12 +60,6 @@ public class CenteredLayoutManager extends RecyclerView.LayoutManager {
      * applied before the views are laid out
      */
     private int mOffset;
-
-    /**
-     * Stores the value of the maximum scroll
-     * that can be reached
-     */
-    private int mMaxScrollY;
 
     /**
      * Stores the center of the parent
@@ -125,17 +125,13 @@ public class CenteredLayoutManager extends RecyclerView.LayoutManager {
 
     @Override
     public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
-        if (getChildCount() > 0) {
-            detachAndScrapAttachedViews(recycler);
-        }
+        detachAllViews(recycler);
 
-        if (state.getItemCount() == 0) {
-            return;
+        if (state.getItemCount() != 0) {
+            calculateDimensions(recycler, state);
+            render(recycler, state);
+            recycle(recycler);
         }
-
-        calculateDimensions(recycler, state);
-        render(recycler, state);
-        recycle(recycler);
     }
 
     @Override
@@ -147,9 +143,11 @@ public class CenteredLayoutManager extends RecyclerView.LayoutManager {
     public int scrollVerticallyBy(int dy, RecyclerView.Recycler recycler, RecyclerView.State state) {
         final int lastScrollY = mScrollY;
         mScrollY = Math.min(Math.max(mScrollY + dy, 0), mMaxScrollY);
-        detachAndScrapAttachedViews(recycler);
+
+        detachAllViews(recycler);
         render(recycler, state);
         recycle(recycler);
+
         return mScrollY - lastScrollY;
     }
 
@@ -167,7 +165,7 @@ public class CenteredLayoutManager extends RecyclerView.LayoutManager {
      * Used to layout children after applying top and bottom offset
      *
      * @param recycler The {@link android.support.v7.widget.RecyclerView.Recycler}
-     *                 passed for getting inflated children
+     *                 passed for getting inflated and data bound children
      * @param state    The {@link android.support.v7.widget.RecyclerView.State}
      *                 passed for getting item count
      */
@@ -202,6 +200,19 @@ public class CenteredLayoutManager extends RecyclerView.LayoutManager {
     }
 
     /**
+     * Detaches views from the screen and puts them in scrap heap to be used recently.
+     * This is a temporary action
+     *
+     * @param recycler The {@link android.support.v7.widget.RecyclerView.Recycler}
+     *                 passed to recycler the children
+     */
+    private void detachAllViews(@NonNull RecyclerView.Recycler recycler) {
+        if(getChildCount() > 0) {
+            detachAndScrapAttachedViews(recycler);
+        }
+    }
+
+    /**
      * Used to recycle the children which are out of bounds and can be recycled
      *
      * @param recycler The {@link android.support.v7.widget.RecyclerView.Recycler}
@@ -217,7 +228,10 @@ public class CenteredLayoutManager extends RecyclerView.LayoutManager {
             if (v == null)
                 continue;
 
-            if (getDecoratedRight(v) >= getParentLeft() && getDecoratedLeft(v) <= getParentRight() && getDecoratedBottom(v) >= getParentTop() && getDecoratedTop(v) <= getParentBottom()) {
+            if (getDecoratedRight(v) >= getParentLeft()
+                    && getDecoratedLeft(v) <= getParentRight()
+                    && getDecoratedBottom(v) >= getParentTop()
+                    && getDecoratedTop(v) <= getParentBottom()) {
                 if (!foundFirst) {
                     first = i;
                     foundFirst = true;
