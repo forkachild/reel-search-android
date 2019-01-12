@@ -32,7 +32,7 @@ The design is highly inspired from [RAMReel] by [@Ramotion], brilliant work guys
 
 It is based around a custom `LayoutManager` named [CenteredLayoutManager] which provides **top** and **bottom** offsets for the scrolling suggestions in a `RecyclerView`. All of it is conveniently enclosed in the [ReelSearchView] which coordinates with its children to realise the reel effect.
 
-I am writing a detailed blog about how it was created from scratch and will post the link soon.
+A detailed blog on the making of this is available at [Reel Search and Android].
 
 ## How to setup
 
@@ -186,4 +186,5 @@ SOFTWARE.
 [ReelSearchView]: https://github.com/forkachild/reel-search-android/blob/master/library/src/main/java/com/suhel/library/ReelSearchView.java
 [SuggestionsAdapter]: https://github.com/forkachild/reel-search-android/blob/master/app/src/main/java/com/suhel/reelsearch/SuggestionsAdapter.java
 [AlphaChildTransformer]: https://github.com/forkachild/reel-search-android/blob/master/library/src/main/java/com/suhel/library/AlphaChildTransformer.java
+[Reel Search and Android]: https://medium.com/@suhelchakraborty/reel-search-and-layoutmanager-an-android-journey-e2f925c8410f
 [PayPal]: https://paypal.me/suhelchakraborty
