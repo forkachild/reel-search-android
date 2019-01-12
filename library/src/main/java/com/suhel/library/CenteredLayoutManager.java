@@ -56,10 +56,14 @@ public class CenteredLayoutManager extends RecyclerView.LayoutManager {
     private int mChildHeight;
 
     /**
-     * Stores both the top and bottom offsets
-     * applied before the views are laid out
+     * Stores the top offset applied before the views are laid out
      */
-    private int mOffset;
+    private int mTopOffset;
+
+    /**
+     * Stores the bottom offset applied before the views are laid out
+     */
+    private int mBottomOffset;
 
     /**
      * Stores the center of the parent
@@ -141,6 +145,10 @@ public class CenteredLayoutManager extends RecyclerView.LayoutManager {
 
     @Override
     public int scrollVerticallyBy(int dy, RecyclerView.Recycler recycler, RecyclerView.State state) {
+        if(state.getItemCount() < 2) {
+            return 0;
+        }
+
         final int lastScrollY = mScrollY;
         mScrollY = Math.min(Math.max(mScrollY + dy, 0), mMaxScrollY);
 
@@ -170,20 +178,22 @@ public class CenteredLayoutManager extends RecyclerView.LayoutManager {
      *                 passed for getting item count
      */
     private void render(RecyclerView.Recycler recycler, RecyclerView.State state) {
-        if (state.getItemCount() < 2) {
+        if (state.getItemCount() == 0) {
             return;
         }
-        final int startIndex = (mScrollY >= mOffset) ?
-                Math.min((mScrollY - mOffset) / mChildHeight, state.getItemCount() - 1) :
+
+        final int firstIndex = (mScrollY >= mTopOffset) ?
+                Math.min((mScrollY - mTopOffset) / mChildHeight, state.getItemCount() - 1) :
                 0;
 
-        int top = (mScrollY >= mOffset) ?
-                -((mScrollY - mOffset) % mChildHeight) :
-                mOffset - mScrollY;
+        final int firstTop = (mScrollY >= mTopOffset) ?
+                -((mScrollY - mTopOffset) % mChildHeight) :
+                mTopOffset - mScrollY;
 
-        int bottom;
+        for (int i = firstIndex, top = firstTop, bottom;
+             i < state.getItemCount() && top < getParentBottom();
+             i++, top = bottom) {
 
-        for (int i = startIndex; i < state.getItemCount() && top < getParentBottom(); i++, top = bottom) {
             View v = recycler.getViewForPosition(i);
             addView(v);
             measureChildWithMargins(v, 0, 0);
@@ -194,7 +204,7 @@ public class CenteredLayoutManager extends RecyclerView.LayoutManager {
                 final int childCenterY = (top + bottom) / 2;
                 final float childCenterOffset = (float) (childCenterY - mCenterY);
                 final float childCenterOffsetRatio = Math.min(Math.max(childCenterOffset / mCenterY, -1.0f), 1.0f);
-                mChildTransformer.onApplyTransform(v, i, i - startIndex, childCenterOffsetRatio);
+                mChildTransformer.onApplyTransform(v, i, i - firstIndex, childCenterOffsetRatio);
             }
         }
     }
@@ -207,7 +217,7 @@ public class CenteredLayoutManager extends RecyclerView.LayoutManager {
      *                 passed to recycler the children
      */
     private void detachAllViews(@NonNull RecyclerView.Recycler recycler) {
-        if(getChildCount() > 0) {
+        if (getChildCount() > 0) {
             detachAndScrapAttachedViews(recycler);
         }
     }
@@ -263,8 +273,10 @@ public class CenteredLayoutManager extends RecyclerView.LayoutManager {
         measureChildWithMargins(scrap, 0, 0);
         mChildHeight = getDecoratedMeasuredHeight(scrap);
         detachAndScrapView(scrap, recycler);
-        mOffset = (getHeight() - mChildHeight) / 2;
-        mMaxScrollY = (2 * mOffset) + (state.getItemCount() * mChildHeight) - getHeight();
+        final int halfChildHeight = mChildHeight / 2;
+        mTopOffset = mCenterY - halfChildHeight;
+        mBottomOffset = getHeight() - mCenterY - halfChildHeight;
+        mMaxScrollY = mTopOffset + (state.getItemCount() * mChildHeight) + mBottomOffset - getHeight();
         mScrollY = Math.min(mMaxScrollY, mScrollY);
     }
 
