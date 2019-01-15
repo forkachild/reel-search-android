@@ -158,6 +158,7 @@ P.S You can always buy me a beer or a coffee through [PayPal]
 
 # LICENSE
 
+```
 MIT License
 
 Copyright (c) 2019 Suhel Chakraborty
@@ -179,6 +180,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+```
 
 [RAMReel]: https://github.com/Ramotion/reel-search
 [@Ramotion]: https://github.com/Ramotion
