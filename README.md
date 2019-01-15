@@ -152,11 +152,11 @@ void onApplyTransform(@NonNull View child,
 
 which gets called on each child when they are laid out. [AlphaChildTransformer] is already attached as a `ChildTransformer` which accomplishes the alpha gradient. You are only limited by your imagination
 
-# Thanks!
+## Thanks!
 
 P.S You can always buy me a beer or a coffee through [PayPal]
 
-# LICENSE
+## LICENSE
 
 ```
 MIT License
