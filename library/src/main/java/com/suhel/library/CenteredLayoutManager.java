@@ -32,9 +32,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * A custom {@link android.support.v7.widget.RecyclerView.LayoutManager} which
  * applies top and bottom offsets to achieve a reel effect
@@ -45,7 +42,7 @@ public class CenteredLayoutManager extends RecyclerView.LayoutManager {
      * Stores the references of {@link OnSelectionChangedListener} delegates
      * to inform about change in selection
      */
-    private final Set<OnSelectionChangedListener> mOnSelectionChangedListeners;
+    private OnSelectionChangedListener mOnSelectionChangedListener;
 
     /**
      * Stores the absolute scroll value
@@ -57,6 +54,11 @@ public class CenteredLayoutManager extends RecyclerView.LayoutManager {
      * that can be reached
      */
     private int mMaxScrollY;
+
+    /**
+     * Stores the number of total items in the adapter
+     */
+    private int mChildCount;
 
     /**
      * Stores the height of each child assuming
@@ -95,7 +97,6 @@ public class CenteredLayoutManager extends RecyclerView.LayoutManager {
      * Constructor to initialize required members
      */
     public CenteredLayoutManager() {
-        mOnSelectionChangedListeners = new HashSet<>();
         mPreviousSelection = -1;
     }
 
@@ -155,9 +156,11 @@ public class CenteredLayoutManager extends RecyclerView.LayoutManager {
     public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
         detachAllViews(recycler);
 
-        if (state.getItemCount() != 0) {
+        mChildCount = state.getItemCount();
+
+        if (mChildCount != 0) {
             calculateDimensions(recycler, state);
-            render(recycler, state);
+            render(recycler);
             recycle(recycler);
         }
     }
@@ -169,7 +172,9 @@ public class CenteredLayoutManager extends RecyclerView.LayoutManager {
 
     @Override
     public int scrollVerticallyBy(int dy, RecyclerView.Recycler recycler, RecyclerView.State state) {
-        if(state.getItemCount() < 2) {
+        mChildCount = state.getItemCount();
+
+        if (mChildCount < 2) {
             return 0;
         }
 
@@ -177,7 +182,7 @@ public class CenteredLayoutManager extends RecyclerView.LayoutManager {
         mScrollY = Math.min(Math.max(mScrollY + dy, 0), mMaxScrollY);
 
         detachAllViews(recycler);
-        render(recycler, state);
+        render(recycler);
         recycle(recycler);
 
         return mScrollY - lastScrollY;
@@ -195,8 +200,9 @@ public class CenteredLayoutManager extends RecyclerView.LayoutManager {
 
                 if (newSelection != mPreviousSelection) {
                     // Inform all listeners about the event
-                    for (final OnSelectionChangedListener listener : mOnSelectionChangedListeners) {
-                        listener.onSelectionChanged(mPreviousSelection, newSelection);
+
+                    if (mOnSelectionChangedListener != null) {
+                        mOnSelectionChangedListener.onSelectionChanged(mPreviousSelection, newSelection);
                     }
 
                     // For the next time
@@ -210,22 +216,12 @@ public class CenteredLayoutManager extends RecyclerView.LayoutManager {
     }
 
     /**
-     * Adds a {@link OnSelectionChangedListener} to the set of listeners.
-     * This method ensures duplicates are not added
+     * Sets the {@link OnSelectionChangedListener}
      *
-     * @param listener The {@link OnSelectionChangedListener} to be added
+     * @param listener The {@link OnSelectionChangedListener} to be set
      */
-    public void addOnSelectionChangedListener(@NonNull OnSelectionChangedListener listener) {
-        mOnSelectionChangedListeners.add(listener);
-    }
-
-    /**
-     * Removes a {@link OnSelectionChangedListener} from the set of listeners
-     *
-     * @param listener The {@link OnSelectionChangedListener} to be removed
-     */
-    public void removeOnSelectionChangedListener(@NonNull OnSelectionChangedListener listener) {
-        mOnSelectionChangedListeners.remove(listener);
+    public void setOnSelectionChangedListener(@Nullable OnSelectionChangedListener listener) {
+        mOnSelectionChangedListener = listener;
     }
 
     /**
@@ -243,16 +239,14 @@ public class CenteredLayoutManager extends RecyclerView.LayoutManager {
      *
      * @param recycler The {@link android.support.v7.widget.RecyclerView.Recycler}
      *                 passed for getting inflated and data bound children
-     * @param state    The {@link android.support.v7.widget.RecyclerView.State}
-     *                 passed for getting item count
      */
-    private void render(RecyclerView.Recycler recycler, RecyclerView.State state) {
-        if (state.getItemCount() == 0) {
+    private void render(RecyclerView.Recycler recycler) {
+        if (mChildCount == 0) {
             return;
         }
 
         final int firstIndex = (mScrollY >= mTopOffset) ?
-                Math.min((mScrollY - mTopOffset) / mChildHeight, state.getItemCount() - 1) :
+                Math.min((mScrollY - mTopOffset) / mChildHeight, mChildCount - 1) :
                 0;
 
         final int firstTop = (mScrollY >= mTopOffset) ?
@@ -260,7 +254,7 @@ public class CenteredLayoutManager extends RecyclerView.LayoutManager {
                 mTopOffset - mScrollY;
 
         for (int i = firstIndex, top = firstTop, bottom;
-             i < state.getItemCount() && top < getParentBottom();
+             i < mChildCount && top < getParentBottom();
              i++, top = bottom) {
 
             View v = recycler.getViewForPosition(i);
@@ -380,7 +374,8 @@ public class CenteredLayoutManager extends RecyclerView.LayoutManager {
          * Called with the new selection value once the view
          * has settled at a particular position from scroll
          *
-         * @param selection The new selection
+         * @param previousSelection The previous selection
+         * @param newSelection      The new selection
          */
         void onSelectionChanged(int previousSelection, int newSelection);
 

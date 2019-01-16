@@ -59,7 +59,7 @@ public class SuggestionsActivity extends AppCompatActivity {
         mBinding.txtQuery.setFilters(new InputFilter[]{
                 (source, start, end, dest, dstart, dend) -> source.toString().toLowerCase().trim()
         });
-        mBinding.reelSearch.addOnSelectionChangedListener((prevSelection, newSelection) -> {
+        mBinding.reelSearch.setOnSelectionChangedListener((prevSelection, newSelection) -> {
             Log.e("Selection", "Changed to " + newSelection + " from " + prevSelection);
         });
     }

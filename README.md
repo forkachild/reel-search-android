@@ -137,11 +137,10 @@ The item selected, in the middle underlying the query `EditText`, can be found t
 int position = ReelSearchView.getSelection()
 ```
 
-#### Add/Remove OnSelectionChangedListener(s)
+#### Set OnSelectionChangedListener
 
 ```java
-ReelSearchView.addOnSelectionChangedListener(listener);
-ReelSearchView.removeOnSelectionChangedListener(listener);
+ReelSearchView.setOnSelectionChangedListener(listener);
 ```
 
 #### Child transformer

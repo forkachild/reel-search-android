@@ -2,6 +2,7 @@ package com.suhel.library;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -131,24 +132,13 @@ public class ReelSearchView extends ViewGroup {
     }
 
     /**
-     * Adds a {@link CenteredLayoutManager.OnSelectionChangedListener} to the set of listeners
+     * Sets the {@link CenteredLayoutManager.OnSelectionChangedListener}
      * of the associated {@link CenteredLayoutManager}.
-     * This method ensures duplicates are not added
      *
-     * @param listener The {@link CenteredLayoutManager.OnSelectionChangedListener} to be added
+     * @param listener The {@link CenteredLayoutManager.OnSelectionChangedListener} to be set
      */
-    public void addOnSelectionChangedListener(@NonNull CenteredLayoutManager.OnSelectionChangedListener listener) {
-        getLayoutManager().addOnSelectionChangedListener(listener);
-    }
-
-    /**
-     * Removes a {@link CenteredLayoutManager.OnSelectionChangedListener} from the set of listeners
-     * of the associated {@link CenteredLayoutManager}
-     *
-     * @param listener The {@link CenteredLayoutManager.OnSelectionChangedListener} to be removed
-     */
-    public void removeOnSelectionChangedListener(@NonNull CenteredLayoutManager.OnSelectionChangedListener listener) {
-        getLayoutManager().removeOnSelectionChangedListener(listener);
+    public void setOnSelectionChangedListener(@Nullable CenteredLayoutManager.OnSelectionChangedListener listener) {
+        getLayoutManager().setOnSelectionChangedListener(listener);
     }
 
     /**
