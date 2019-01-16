@@ -1,6 +1,7 @@
 package com.suhel.library;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -106,15 +107,20 @@ public class ReelSearchView extends ViewGroup {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
 
+        final int left = getPaddingLeft();
+        final int top = getPaddingTop();
+        final int right = getMeasuredWidth() - getPaddingRight();
+        final int bottom = getMeasuredHeight() - getPaddingBottom();
+
         // Layout the RecyclerView child spanning the whole view
-        mRecyclerView.layout(l, t, r, b);
+        mRecyclerView.layout(left, top, right, bottom);
 
         // Calculations
         final int halfEditTextHeight = mEditText.getMeasuredHeight() / 2;
-        final int centerY = (t + b) / 2;
+        final int centerY = (top + bottom) / 2;
 
         // Layout the EditText at the center
-        mEditText.layout(l, centerY - halfEditTextHeight, r, centerY + halfEditTextHeight);
+        mEditText.layout(left, centerY - halfEditTextHeight, right, centerY + halfEditTextHeight);
     }
 
     /**
@@ -122,6 +128,37 @@ public class ReelSearchView extends ViewGroup {
      */
     public CenteredLayoutManager getLayoutManager() {
         return mLayoutManager;
+    }
+
+    /**
+     * Adds a {@link CenteredLayoutManager.OnSelectionChangedListener} to the set of listeners
+     * of the associated {@link CenteredLayoutManager}.
+     * This method ensures duplicates are not added
+     *
+     * @param listener The {@link CenteredLayoutManager.OnSelectionChangedListener} to be added
+     */
+    public void addOnSelectionChangedListener(@NonNull CenteredLayoutManager.OnSelectionChangedListener listener) {
+        getLayoutManager().addOnSelectionChangedListener(listener);
+    }
+
+    /**
+     * Removes a {@link CenteredLayoutManager.OnSelectionChangedListener} from the set of listeners
+     * of the associated {@link CenteredLayoutManager}
+     *
+     * @param listener The {@link CenteredLayoutManager.OnSelectionChangedListener} to be removed
+     */
+    public void removeOnSelectionChangedListener(@NonNull CenteredLayoutManager.OnSelectionChangedListener listener) {
+        getLayoutManager().removeOnSelectionChangedListener(listener);
+    }
+
+    /**
+     * Returns the position of item highlighted in the middle of the
+     * screen from the associated {@link CenteredLayoutManager}
+     *
+     * @return Item index starting from 0
+     */
+    public int getSelection() {
+        return getLayoutManager().getSelection();
     }
 
 }

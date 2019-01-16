@@ -30,7 +30,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputFilter;
-import android.text.Spanned;
+import android.util.Log;
 import com.suhel.reelsearch.databinding.ActivitySuggestionsBinding;
 import com.suhel.reelsearch.utils.RxUtils;
 import io.reactivex.disposables.CompositeDisposable;
@@ -50,7 +50,7 @@ public class SuggestionsActivity extends AppCompatActivity {
         mAdapter = new SuggestionsAdapter(this);
         mBinding.lstSuggestions.setAdapter(mAdapter);
         mBinding.btnSelect.setOnClickListener(v -> {
-            final int selectedPosition = mBinding.reelSearch.getLayoutManager().getSelectedItemPosition();
+            final int selectedPosition = mBinding.reelSearch.getLayoutManager().getSelection();
 
             Snackbar.make(mBinding.btnSelect,
                     "Selected position " + selectedPosition + " item " + mAdapter.getItem(selectedPosition),
@@ -58,6 +58,9 @@ public class SuggestionsActivity extends AppCompatActivity {
         });
         mBinding.txtQuery.setFilters(new InputFilter[]{
                 (source, start, end, dest, dstart, dend) -> source.toString().toLowerCase().trim()
+        });
+        mBinding.reelSearch.addOnSelectionChangedListener((prevSelection, newSelection) -> {
+            Log.e("Selection", "Changed to " + newSelection + " from " + prevSelection);
         });
     }
 

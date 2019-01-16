@@ -32,11 +32,20 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * A custom {@link android.support.v7.widget.RecyclerView.LayoutManager} which
  * applies top and bottom offsets to achieve a reel effect
  */
 public class CenteredLayoutManager extends RecyclerView.LayoutManager {
+
+    /**
+     * Stores the references of {@link OnSelectionChangedListener} delegates
+     * to inform about change in selection
+     */
+    private final Set<OnSelectionChangedListener> mOnSelectionChangedListeners;
 
     /**
      * Stores the absolute scroll value
@@ -67,9 +76,24 @@ public class CenteredLayoutManager extends RecyclerView.LayoutManager {
     private int mCenterY;
 
     /**
+     * Stores the previous selected position to ensure
+     * duplicate values aren't sent to {@link OnSelectionChangedListener}
+     * listeners
+     */
+    private int mPreviousSelection;
+
+    /**
      * Stores the reference to the {@link ChildTransformer}
      */
     private ChildTransformer mChildTransformer;
+
+    /**
+     * Constructor to initialize required members
+     */
+    public CenteredLayoutManager() {
+        mOnSelectionChangedListeners = new HashSet<>();
+        mPreviousSelection = -1;
+    }
 
     /**
      * Used to get the current {@link ChildTransformer}
@@ -153,13 +177,58 @@ public class CenteredLayoutManager extends RecyclerView.LayoutManager {
         return mScrollY - lastScrollY;
     }
 
+    @Override
+    public void onScrollStateChanged(int state) {
+        super.onScrollStateChanged(state);
+        switch (state) {
+
+            // Scroll has completed
+            case RecyclerView.SCROLL_STATE_IDLE:
+
+                final int newSelection = getSelection();
+
+                if (newSelection != mPreviousSelection) {
+                    // Inform all listeners about the event
+                    for (final OnSelectionChangedListener listener : mOnSelectionChangedListeners) {
+                        listener.onSelectionChanged(mPreviousSelection, newSelection);
+                    }
+
+                    // For the next time
+                    mPreviousSelection = newSelection;
+                }
+
+                break;
+
+        }
+
+    }
+
+    /**
+     * Adds a {@link OnSelectionChangedListener} to the set of listeners.
+     * This method ensures duplicates are not added
+     *
+     * @param listener The {@link OnSelectionChangedListener} to be added
+     */
+    public void addOnSelectionChangedListener(@NonNull OnSelectionChangedListener listener) {
+        mOnSelectionChangedListeners.add(listener);
+    }
+
+    /**
+     * Removes a {@link OnSelectionChangedListener} from the set of listeners
+     *
+     * @param listener The {@link OnSelectionChangedListener} to be removed
+     */
+    public void removeOnSelectionChangedListener(@NonNull OnSelectionChangedListener listener) {
+        mOnSelectionChangedListeners.remove(listener);
+    }
+
     /**
      * Returns the position of item highlighted in the middle of the
      * screen
      *
      * @return Item index starting from 0
      */
-    public int getSelectedItemPosition() {
+    public int getSelection() {
         return (int) (((float) mScrollY / mChildHeight) + 0.5f);
     }
 
@@ -273,6 +342,21 @@ public class CenteredLayoutManager extends RecyclerView.LayoutManager {
                               @IntRange(from = 0, to = Integer.MAX_VALUE) int index,
                               @IntRange(from = 0, to = Integer.MAX_VALUE) int screenPosition,
                               @FloatRange(from = -1.0f, to = 1.0f) float centerOffset);
+
+    }
+
+    /**
+     * An interface used to notify others about a change in selection
+     */
+    public interface OnSelectionChangedListener {
+
+        /**
+         * Called with the new selection value once the view
+         * has settled at a particular position from scroll
+         *
+         * @param selection The new selection
+         */
+        void onSelectionChanged(int previousSelection, int newSelection);
 
     }
 

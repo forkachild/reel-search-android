@@ -137,7 +137,9 @@ lstSuggestions.setAdapter(adapter);
 ```
 ### Features
 
-  - Get current selected position from `ReelSearchView.getLayoutManager().getSelectedItemPosition()`
+  - Get current selected position from `ReelSearchView.getSelection()`
+  - Add/Remove `OnSelectionChangedListener` with corresponding add/remove methods in
+  both `ReelSearchView` and `CenteredLayoutManager`
 
 ## Thanks!
 
